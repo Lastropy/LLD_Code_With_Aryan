@@ -5,4 +5,5 @@ import LLD_CWA.State_Pattern.States.IState;
 public interface IContext {
     IState getCurrentState();
     void next();
+    void setState(IState state);
 }

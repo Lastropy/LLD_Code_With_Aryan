@@ -15,8 +15,13 @@ public class TrafficLightContext implements IContext{
     }
 
     @Override
-    public void next() {
-        this.currentState = currentState.next();
+    public void setState(IState state){
+        this.currentState = state;
         System.out.println("Changed State to: "+currentState.getName());
+    }
+
+    @Override
+    public void next() {
+        this.setState(this.currentState.next());
     }
 }
