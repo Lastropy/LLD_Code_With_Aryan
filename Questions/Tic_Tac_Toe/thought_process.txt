@@ -1,0 +1,146 @@
+Tic Tac Toe Game
+Part 1: State Functionalities
+- Board. Normally 3x3
+- 2 Players - 2 unique Symbol (X and O)
+- Player take turns.
+- On each players turn, they place their Symbol in a free cell, in the board.
+- After each turn, verify if any row column or diagonal is same Symbol. If yes, that player wins.
+- If no free cell left and no one wins, then game is draw. (Edge case missed)
+
+=> Ask interviewer is this the flow he had in mind?
+=> Sure, please continue.
+
+Part 2: Clarifying Requirements
+=> Okay, I'd like to ask a few Clarifying Questions regarding the requirements, to ensure we're on the same page.
+Clarifying Questions
+- Will board be bigger than 3x3 only? (Close ended question)
+- Will players only be 2? (Close ended question)
+- Will players be actual humans (input) or programatic? (Close ended question)
+- What are the core requirements? (Open ended question)
+
+=> We want 3x3 only, 2 player human game. Move validation. Detects win or draw conditions.
+
+Part 3: List final requirements (write them down)
+=> So, to ensure we're aligned, lemme list the key requirements:
+- 3x3 game board
+- 2 human players
+- Alternating turns between X and O
+- Move validation (no invalid moves).
+- Win and Draw checks after every move.
+
+=> Perfect! Let's proceed.
+
+Part 4: Identify Key Entities
+- Symbol. Enum. X, O, Empty. Represents state of a cell in a board.
+- Board. 
+- Player.
+
+Part 5: Identify Design Challenges
+- Managing game state: ensure player turns, current board status, game completion/draw conditions 
+- Implementing Move validation: move should be legal, within bound and made in empty cell.
+- Tracking player turns: Ensuring proper alteration between X and O.
+- Detect game end conditions: Win/draw
+
+Part 6: Tell hypothetical design patterns (you CAN use, not that you WILL)
+I can use: 
+- Strategy Pattern for Player Interactions, to ensure players interact with system through consistent interface.
+Can support human player and AI Players (future).
+eg: Player interface with makeMove() method implemented differently for human and AI players.
+- Observer Pattern for Game event tracking 
+Notify listeners when game state changes.
+Supports potential future extensions (like logging, notifications)
+- Factory Pattern for Player Creation
+Ensures consistent Player Creation.
+Easy addition of new Player types
+
+Part 7: Write down classes and relationships
+
+enum Symbol {
+    X,
+    O,
+    EMPTY
+}
+
+enum PlayerType {
+    HUMAN,
+    AI
+}
+
+class Board {
+    Symbol[][] grid;
+    int size;
+}
+
+interface PlayerStrategy {
+    int[] getNextMove(Board b);
+}
+
+class HumanPlayerStrategy implements PlayerStrategy{
+    int[] getNextMove(Board b){
+
+    }
+}
+
+class AIPlayerStrategy implements PlayerStrategy{
+    int[] getNextMove(Board b){
+        
+    }
+}
+
+class Player {
+    int id;
+    Symbol mark;
+    PlayerStrategy moveStrategy;
+
+    int[] makeMove(Board b) {
+        return moveStrategy.getNextMove(b);
+    }
+}
+
+class PlayerFactory {
+    static int id = 0;
+    int getPlayer(PlayerType t){
+        Symbol currentSymbol = Symbol.values()[id];
+        if(t == PlayerType.HUMAN) {
+            return Player(id++, currentSymbol, HumanPlayerStrategy);
+        } else if(t == PlayerType.AI) {
+            return Player(id++, currentSymbol, AIPlayerStrategy);
+        } else {
+            throw Exception("Invalid Player Type cannot be created");
+        }
+    }
+}
+
+class Game {
+    Board b;
+    int sizeOfBoard;
+    int numberOfPlayers;
+    Players[] players;
+    int numberOfFreeCells;
+
+    void start() {
+        int currPlayerId = 0;
+        while(true) {
+            int[] nextMove = players[currPlayerId].makeMove(b);
+            if(!isValidMove(nextMove, b)) {
+                throw Exception("Invalid move by Player "+ id);
+            }
+            b[nextMove[0]][nextMove[1]] = players[currPlayerId].mark;
+            numberOfFreeCells--;
+            bool isWinner = checkIfCurrentPlayerWins();
+            if(isWinner){
+                SOP("Player " + str(id)+ " wins!!");
+                break;
+            } 
+            else if(numberOfFreeCells == 0) {
+                SOP("Game is a draw!");
+                break;
+            }
+            currPlayerId++;
+            currPlayerId %= numberOfPlayers;
+        }
+    }
+}
+
+//////////////// You missed isValidMove() ///////////////////
+/////////////// instead of return int[] from makeNextMove(), return Position -> class {int row; int col;} /////////////////
