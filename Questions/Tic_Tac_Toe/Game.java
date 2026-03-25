@@ -1,7 +1,5 @@
 package LLD_CWA.Questions.Tic_Tac_Toe;
 
-import java.util.Scanner;
-
 import LLD_CWA.Questions.Tic_Tac_Toe.Player.Player;
 import LLD_CWA.Questions.Tic_Tac_Toe.Player.PlayerFactory;
 import LLD_CWA.Questions.Tic_Tac_Toe.Player.PlayerType;
