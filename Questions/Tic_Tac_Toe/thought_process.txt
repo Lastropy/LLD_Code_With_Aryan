@@ -52,6 +52,7 @@ Supports potential future extensions (like logging, notifications)
 - Factory Pattern for Player Creation
 Ensures consistent Player Creation.
 Easy addition of new Player types
+- Singleton pattern for Board (ensures one instance of board throughtout the game) - global access point
 
 Part 7: Write down classes and relationships
 
