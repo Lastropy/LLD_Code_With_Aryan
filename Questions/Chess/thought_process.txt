@@ -1,0 +1,222 @@
+Chess Game
+////////////////////////////////////////// IMP - To be done later ///////////////////////////////////////////////////
+Part 1: State Functionalities
+- Board: Normally 8x8
+- Players: Usually 2
+- Pieces: 16 pieces - Rooks (2), Knights (2), bishops(2), queen(1), king(1), pawns (8)
+- Pieces have fixed starting position
+- Each piece has it's own valid moves it can do.
+=> King can move 1 square in any direction
+=> Queen can move any number of squares in any direction
+=> Bishop can move any number of squares along the 2 diagonals it is part of.
+=> Rook can move any number of squares along the row and column it is part of.
+=> Pawn can move 2 squares forward in its row, on its first move and 1 square forward in subsequent moves. It captures diagonally.
+=> Knight moves in "L" direction, it moves 2 squares in 1 direction and 1 square in perpendicular direction.
+
+- Players take turns to move pieces to valid position, if no other piece in between.
+- If you move your piece to a square containing a piece of opposite colour, then the opponent's piece is said to be captured. Your piece stays, their piece goes away.
+- If a king is at a position reachable by an opp color piece, king is in check.
+- If a king is in check and none of its colour pieces can capture the piece or block it, the king is said to be in checkmate.
+- Checkmating the king is the objective of the game.
+- If the opp colour piece has no valid moves left and the king is not in check, then it is called stalemate (draw).
+- Game goes on until either checkmate happens or stalemate happens.
+
+=> Ask interviewer is this the flow he had in mind?
+=> Sure, please continue.
+
+Part 2: Clarifying Requirements
+=> Okay, I'd like to ask a few Clarifying Questions regarding the requirements, to ensure we're on the same page.
+Clarifying Questions
+Close Ended Question - 
+- Will board be bigger than 8x8 only? 
+- Will players only be 2?
+- Will players be actual humans (input) or programatic?
+Open Ended Question - 
+- What are the core requirements?
+
+Part 3: List final requirements (write them down)
+=> So, to ensure we're aligned, lemme list the key requirements:
+- 8x8 game board
+- 2 human players
+- Alternating turns between 2 Players.
+- Move validation (no invalid moves).
+- Detects check, checkmate and stalemate after every move.
+
+=> Perfect! Let's proceed.
+Part 4: Identify Key Entities
+- Player 
+- Piece 
+- Board 
+- Game
+
+Part 5: Identify Design Challenges
+- Managing game state: ensure player turns, current game status, game completion/draw conditions 
+=> can use enum GameState
+- Implementing Move validation: move should be legal, within bound.
+- Tracking player turns: Ensuring proper alteration between black and white.
+- Detect game conditions: Win/check/draw
+
+Part 5: Tell hypothetical design patterns (you CAN use, not that you WILL)
+- Strategy design pattern for how HumanPlayer / AIPlayer move input (IPlayerStrategy)
+- Strategy for each piece movement - IMovementStrategy
+- Factory design pattern for creating players. Supply IPlayerStrategy based on player type.
+- Factory design pattern for creating pieces. Supply IMovementStrategy based on piece type.
+- Observer design pattern for game logging and live notifications/updates.
+- Singleton pattern for Board (ensures one instance of board throughtout the game) - global access point
+
+Part 6: Write down classes and relationships
+- Player - interface ✅
+=> HumanPlayer ✅
+=> AIPlayer ✅
+- IPlayerStrategy ✅
+- Position - dataclass - int row, int col ✅
+- IMovementStrategy - interface -> PawnMovementStrategy, QueenMovementStrategy etc ✅
+- Piece✅
+=> colour - ✅
+=> PieceType - enum - {EMPTY, PAWN, KING, QUEEN, ROOK, BISHOP, KNIGHT}✅
+=> Position ❌
+=> IMovementStrategy✅
+=> possibleMoves() - Gives a list of possible moves based on IMovementStrategy ✅
+- GameController 
+=> Piece[][] board
+=> Player black 
+=> Player white
+=> start()
+=> isValidMove(Piece, Position)
+=> isCheck()
+=> isCheckMate()
+=> isStaleMate()
+
+Part 7: Classes and Interfaces
+class Position {
+    int row;
+    int col;
+}
+
+interface IPlayer {
+    IPlayerStrategy playerStrategy; // Don't keep this here; it makes it final
+    Position makeMove();
+}
+
+class HumanPlayer implements IPlayer{
+    HumanPlayer(IPlayerStrategy _ps) {
+        ps = _ps;
+    }
+
+    Position makeMove() {
+        return ps.nextMove();
+    }
+}
+
+class AIPlayer implements IPlayer{
+    AIPlayer(IPlayerStrategy _ps) {
+        ps = _ps;
+    }
+
+    Position makeMove() {
+        return ps.nextMove();
+    }
+}
+
+interface IMovementStrategy{
+    ArrayList<Position> nextPossibleMoves(Position currentPosition, int turn);
+}
+
+class PawnMovementStrategy implements IMovementStrategy{
+    ArrayList<Position> nextPossibleMoves(Position currentPosition, int turn){
+
+    }
+}
+
+enum PieceType {
+    EMPTY,
+    PAWN, 
+    QUEEN,
+    ROOK,
+    KING,
+    KNIGHT,
+    BISHOP
+}
+
+enum Colour {
+    WHITE,
+    BLACK
+}
+
+interface IPiece {
+    Colour color;
+    IMovementStrategy ms;
+
+    List<Position> possibleMoves(Position currentPosition);
+}
+
+class Queen implements IPiece {
+    Colour color;
+    IMovementStrategy ms;
+
+    Queen(Colour col = Colour.WHITE, PieceType t = PieceType.EMPTY, IMovementStrategy _ms){
+        color = col;
+        type = t;
+        ms = _ms;
+    }
+
+    List<Position> possibleMoves(Position currentPosition){
+        List<Position> possibilites = ms.nextPossibleMoves();
+        ...
+    }
+}
+
+class PieceFactory{
+    Piece getPiece(PieceType t, Color c) {
+        if(t == PieceType.EMPTY) {
+            return new EmptySquare(c, EmptySquareStrategy);
+        } else if(t == PieceType.Queen) {
+            return new Queen(c, QueenMovementStrategy);
+        }
+    }
+}
+
+interface IGame{
+    void start();
+    void generateInitialConfiguration()
+}
+
+class ChessGameController implements IGame {
+    Piece[][] board;
+    int size = 8;
+    List<Player> players;
+
+    GameController() {
+        board = new Piece[8][8];
+        PieceFactory pf = new PieceFactory();
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++){
+                if (i == 0 || i == 7) {
+                    bool isBlack = (i == 7);
+                    if(j == 0 || j == 7) {
+                        board[i][j] == pf.getPiece(PieceType.ROOK, (isBlack ? Color.BLACK: Color.WHITE));
+                    } else if(j == 1 || j == 6){
+                        ...
+                    }
+                } else if (i == 1 || i == 6) {
+                    board[i][j] = pf.getPiece(PieceType.PAWN, (i == 1 ? Color.WHITE: Color.BLACK));
+                } else {
+                    bool isBlack = (i % 2 == j % 2);
+                    board[i][j] = pf.getPiece(PieceType.EMPTY, (isBlack ? Color.BLACK: Color.WHITE));
+                }
+            }
+        }
+    }
+
+    void generateInitialConfiguration(){
+        board
+    }
+
+    void start(){
+
+    }
+=> isValidMove(Piece, Position)
+=> isCheck()
+=> isCheckMate()
+=> isStaleMate()
+}
