@@ -1,0 +1,55 @@
+Snake And Food Game
+Actual Problem (DSA) - https://leetcode.com/problems/design-snake-game/
+
+Part 0: Core Idea
+- M x N board 
+- There is a snake. 
+- Snake has length, body, head, tail. Starting length = 1 (let's say)
+- A fruit is there.
+- If snake eats fruit, it's length increases by 1; fruit respawns elsewhere (non-snake square)
+- The player controls snake's direction -> 4 directions -> up, down, left, right
+- If snake's head touches its own body or the wall, it dies.
+- Game keeps going until snake covers entire grid or dies.
+- Score of player in game = # of fruits eaten till now.
+
+Part 1: State Functionalities
+- The snake moves in a grid based environment
+- The player controls the direction of the head of the snake.
+- The snake grows when it eats food.
+- The game ends when snake collides with a wall or itself.
+
+=> Ask interviewer is this the flow he had in mind?
+=> Sure, please continue.
+
+Part 2: Clarifying Requirements
+- Is the board M x N or N x N?
+- Starting snake length? Starting Direction?
+- Will number of fruits be fixed or the fruits spawn 1 at a time randomnly?
+- What are the core requirements? (Open ended question)
+
+=> interviewer says
+- Supports standard grid based M x N game 
+- Allow player to control snake's movement
+- Support food placement and consumption mechanics (Fruits randown spawn)
+- Detect collision (self/wall)
+- Ensure proper movement and growth.
+- Track game score.
+
+=> we'll say, to clarify, the key requirements are - 
+- A game grid with some width and height.
+- A single snake entity, head direction controlled by player.
+- Food objects that appear at a predefined positions on the grid.
+- Movement mechanics, updating game state with each move.
+- A collision detection condition.
+- A score tracking and display system
+
+=> Perfect! Let's proceed.
+
+Part 4: Identify Key Entities
+- GameBoard
+- Snake
+- Direction (enum) - UP, DOWN, LEFT, RIGHT 
+- Player 
+- Food 
+
+Note: Jumping into code
