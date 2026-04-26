@@ -52,4 +52,31 @@ Part 4: Identify Key Entities
 - Player 
 - Food 
 
-Note: Jumping into code
+Key INSIGHTS!! 
+
+Snake is dequeue! Why?
+- Snake has 2 ends - head and tail.
+- When a snake moves, 1 cell (in the direction of movement) gets added to it
+at head and removed from tail.
+- Operations at both end - add at start, remove from end.
+- Hence dequeue.
+- Deque<Position> body
+
+What else needed?
+- Suppose next cell is body, how would you know?
+- Quick lookup -> bodyCellsPositionMap <Position , boolean> 
+
+Part 5: Design Challenges
+- Efficient Snake Movement
+- Collision Detection
+- Food management
+- Game state management
+- Extensibility
+
+Part 5: Design Patterns Approach
+- Strategy for Player <> Snake Movement Algorithm or inputs (Human/AI)
+- Factory for food generation
+- Singleton for board
+- Observer for Score Updates
+
+Part 6: Implementation
