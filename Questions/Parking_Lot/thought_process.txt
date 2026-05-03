@@ -1,0 +1,155 @@
+Part 0: Core Idea
+- Parking Lot to store multiple cars, across multiple floors.
+- Each floor can have multiple slots, which can fit a car of certain size.
+- So parking lot will have fixed capacity for each car type and total fixed capacity.
+- When a car enters, it will take 1 slot.
+- When a car leaves, it frees up 1 slot.
+- When a car leaves, based on the time duration of parking and the type of car, it will be charged certain amount.
+- Each car will belong to a owner, who will pay the parking fee on exit.
+
+Part 1: State Functionalities
+- Initialise a parking lot, having defined floors - each floor having certain vehicle type capacities.
+- Method to check current capacity for the entering car type, and assign it a slot (if available).
+- If vehicle is assigned slot, it will get a parking ticket.
+- Managing parking space efficiently.
+- Tracking the exit => collecting parking lot payment, then updating capacity of floor.
+
+Part 2: Clarifying Questions
+- How many vehicle types are there? (Slot types dependent on vehicle types)
+- How many floors are there?
+- How should we assign the vehicle to a slot, in case multiple slots are there?
+- What if for a smaller vehicle, we only have bigger slots? Do we assign it that?
+- What is the pricing strategy currently?
+- What payment methods should we allow?
+- What happens if a vehicle comes and there is no capacity?
+- What are the core Functionalities?
+
+=> We want a system where - 
+- Supports multiple vehicle types (Car, Bike, Truck etc)
+- Has different slot sizes, based on vehicle type.
+- Allows multiple payment methods.
+- Ensure smooth entry/exit with with accurate parking fee calculation.
+
+=> So, to summarize, we want a Parking lot system where we have - 
+- A parking lot with multiple slots
+- Supports different vehicle types like car, bikes, trucks etc.
+- Dynamic slot allocation based on vehicle size.
+- Payment Processing with multiple payment modes (cash, card, upi etc)
+- Entry tiket issuance, capacity checker, and exit validation.
+
+=> Perfect, let's proceed.
+
+Part 3: Identifying design challenges and patterns
+- Keeping vehicle types scalable (can use Inheritance + enum)
+- Keeping slot size scalable
+- Ensuring efficient lookup of free spaces.
+- Keeping the strategy to choose free space for a vehicle scalable.
+- Payment processing.
+- Keeping the strategy to choose parking fee calculation scalable.
+
+Part 4: Identifying key entities
+- VehicleType
+enum VehicleType {
+    CAR,
+    TRUCK,
+    BIKE
+}
+
+- IVehicle and concrete Vehicle classes
+abstract class IVehicle {
+    VehicleType vehicleType;
+}
+
+class Car extends IVehicle {}
+class Bike extends IVehicle {}
+
+- ParkingLot
+class ParkingLot {
+    List<Floor> floors;
+    ISlotAllotmentStrategy sas;
+    IPricingStrategy pricingStrategy;
+
+    void initialiseParkingLot();
+    
+    boolean parkVehicle(Vehicle v);
+    Slot getBestSlot(VehicleType vt);
+    ParkingTicket generateParkingTicket(Vehicle v, Slot s, String startTime);
+    
+    boolean exitingFromParkingLot(Vehicle v);
+    float calculateBill(VehicleType vt, Ticket t);
+    boolean collectPayment(Ticket t);
+}
+
+- Floor 
+class Floor {
+    int id;
+    Map<VehicleType, List<Slot>> freeSlots, takenSlots;
+    
+    boolean hasFreeSlot(VehicleType vt);
+    List<Slot> getFreeSlots(VehicleType vt);
+}
+
+- Slot 
+class Slot {
+    boolean isOccupied;
+    Floor floor;
+    VehicleType vehicleType;
+}
+
+enum TicketStatus {
+    ONGOING,
+    INITIATING_PAYMENT,
+    PAYMENT_FAILED,
+    PROCESSED
+}
+
+- ParkingTicket 
+class ParkingTicket {
+    Vehicle v;
+    Slot s;
+    TicketStatus ts;
+    String startTime;
+    String endTime;
+    Payment payment;
+}
+
+- SlotAllotmentStrategy
+class ISlotAllotmentStrategy {
+    Slot getBestSlot(List<Slot> freeSlots);
+}
+
+enum PaymentType {
+    CASH,
+    CARD,
+    UPI
+}
+
+- Payment 
+class Payment {
+    PaymentType pt;
+    PaymentStrategy ps;
+    boolean isPaymentProcessed;
+    
+    boolean getPayment(float amount) {}
+}
+
+- PaymentStrategy
+abstract class IPaymentStrategy {
+    boolean collectPayment(float amount);
+}
+
+class UPIPaymentStrategy extends IPaymentStrategy{
+    boolean collectPayment(float amt) {
+
+    }
+}
+
+- PricingStrategy 
+abstract class IPricingStrategy {
+    float calculatePricing(VehicleType vt, String startTime, String endTime);
+}
+
+class NormalPricingStrategy extends IPricingStrategy {
+    float calculatePricing(VehicleType vt, String startTime, String endTime);
+}
+
